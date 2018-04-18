@@ -1,4 +1,4 @@
-﻿// Copyright 2013 Serilog Contributors 
+﻿// Copyright 2018 Serilog Contributors 
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -10,19 +10,16 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
+// limitations under the License.
+
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Sinks.PeriodicBatching;
-// limitations under the License.
-
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Serilog.Sinks.MSSqlServer
 {
@@ -91,7 +88,8 @@ namespace Serilog.Sinks.MSSqlServer
                             parameterList.Append("@P");
                             parameterList.Append(index);
 
-                            SqlParameter parameter = new SqlParameter($"@P{index++}", field.Value ?? DBNull.Value);                            
+                            SqlParameter parameter = new SqlParameter($"@P{index}", field.Value ?? DBNull.Value);                            
+
                             // The default is SqlDbType.DateTime, which will truncate the DateTime value if the actual
                             // type in the database table is datetime2. So we explicitly set it to DateTime2, which will
                             // work both if the field in the table is datetime and datetime2, which is also consistent with 
@@ -100,6 +98,8 @@ namespace Serilog.Sinks.MSSqlServer
                                 parameter.SqlDbType = SqlDbType.DateTime2;
 
                             command.Parameters.Add(parameter);
+
+                            index++;
                         }
 
                         parameterList.Append(')');
